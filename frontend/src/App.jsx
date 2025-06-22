@@ -1,7 +1,13 @@
+import * as tf from '@tensorflow/tfjs';
+import { useEffect } from 'react';
+
 import React, { useState } from 'react';
 import { Receipt, BookOpen, TrendingUp, Upload, ArrowLeft, Eye, AlertTriangle } from 'lucide-react';
 
+
+
 const App = () => {
+  
   const [currentPage, setCurrentPage] = useState('home');
   const [uploadedFiles, setUploadedFiles] = useState([
     {
@@ -39,25 +45,55 @@ const App = () => {
     }
   };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0];
-      // Simulate file processing
-      const newFile = {
-        id: uploadedFiles.length + 1,
-        name: file.name,
-        preview: `${file.name} - Processing complete`,
-        issues: Math.random() > 0.5 ? ['Sample issue detected'] : [],
-        status: Math.random() > 0.5 ? 'flagged' : 'verified'
-      };
-      setUploadedFiles([...uploadedFiles, newFile]);
-      alert(`File "${file.name}" uploaded successfully!`);
-    }
-  };
+const handleDrop = async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  setDragActive(false);
+
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    const file = e.dataTransfer.files[0];
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const data = JSON.parse(event.target.result);
+        const features = data.features;
+
+        if (!features || features.length !== 3) {
+          alert("❌ Invalid JSON format. Must contain 3 features.");
+          return;
+        }
+
+        // Load model (make sure model.json is in /public/models)
+        const model = await tf.loadLayersModel('/models/model.json');
+
+        const inputTensor = tf.tensor2d([features]);
+        const prediction = model.predict(inputTensor);
+        const output = await prediction.data();
+        const isVerified = output[0] > 0.5;
+
+        const newFile = {
+          id: uploadedFiles.length + 1,
+          name: file.name,
+          preview: `${file.name} - ${isVerified ? "Verified ✅" : "Flagged 🚩"}`,
+          issues: isVerified ? [] : ['Possible anomaly: Appetizer flagged', 'Check tax calculation'],
+          status: isVerified ? 'verified' : 'flagged'
+        };
+
+        setUploadedFiles([...uploadedFiles, newFile]);
+        alert(`File "${file.name}" analyzed: ${isVerified ? "✅ Verified" : "🚩 Flagged"}`);
+      } catch (err) {
+        console.error(err);
+        alert("❌ Failed to read or analyze the file.");
+      }
+    };
+
+    reader.readAsText(file);
+  }
+};
+
+
+
 
   const renderHome = () => (
     <div className="min-h-screen min-w-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -120,7 +156,7 @@ const App = () => {
   );
 
   const renderUpload = () => (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen min-w-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <header className="flex items-center p-6">
         <button
           onClick={() => setCurrentPage('home')}
@@ -182,7 +218,7 @@ const App = () => {
   );
 
   const renderHistory = () => (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen min-w-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <header className="flex items-center p-6">
         <button
           onClick={() => setCurrentPage('home')}
@@ -243,7 +279,7 @@ const App = () => {
   );
 
   const renderDocumentDetail = () => (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen min-w-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <header className="flex items-center p-6">
         <button
           onClick={() => setCurrentPage('history')}
@@ -342,7 +378,7 @@ const App = () => {
   );
 
   const renderAnalytics = () => (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen min-w-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <header className="flex items-center p-6">
         <button
           onClick={() => setCurrentPage('home')}
