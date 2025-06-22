@@ -1,124 +1,69 @@
-const express = require("express");
-const router = express.Router();
-const axios = require("axios");
-const multer = require("multer");
-const sharp = require("sharp");
-const tf = require("@tensorflow/tfjs-node");
-const cosineSimilarity = require("compute-cosine-similarity");
-const { loadModel, predictFraud } = require("./modelService");
-const { parseGeminiText } = require("./geminiService");
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const connectDB = require('../../config/database'); // ✅ CORRECT
 
-let model;
 
-// Load TensorFlow model on startup
-(async () => {
-  model = await loadModel();
-})();
+const app = express();
 
-// Multer for file upload
-const upload = multer({ storage: multer.memoryStorage() });
+// 🧩 Monkey-patch to debug bad app.use inputs
+const originalAppUse = app.use;
+app.use = function (...args) {
+  console.log("🧩 app.use called with:", JSON.stringify(args[0]));
+  return originalAppUse.apply(app, args);
+};
 
-// POST /api/analyze-receipt
-router.post("/analyze-receipt", upload.single("receipt"), async (req, res) => {
-  try {
-    const imageBuffer = await sharp(req.file.buffer).resize(512).toBuffer();
+// ✅ Connect to MongoDB
+connectDB();
 
-    // 1. Gemini OCR & NLP
-    const ocrText = await parseGeminiText(imageBuffer);
+// ✅ Core middleware
+app.use(helmet());
+app.use(cors());
+app.use(morgan('combined'));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
 
-    // 2. Fraud prediction (image features + text logic)
-    const fraudScore = await predictFraud(model, imageBuffer);
 
-    // 3. Duplicate detection (simplified cosine similarity demo)
-    const isDuplicate = await checkForDuplicate(ocrText);
-
-    res.json({
-      extractedText: ocrText,
-      fraudScore,
-      isDuplicate,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Receipt analysis failed." });
-  }
+// ✅ Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV
+  });
 });
 
-async function checkForDuplicate(newText) {
-  const existingReceipts = await getStoredReceiptTexts(); // Assume from MongoDB
-  const newVector = textToVector(newText);
+// ✅ 404 handler
+app.all('*', (req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
 
-  for (const existingText of existingReceipts) {
-    const existingVector = textToVector(existingText);
-    if (cosineSimilarity(newVector, existingVector) > 0.95) return true;
-  }
-  return false;
-}
 
-function textToVector(text) {
-  const tokens = text.toLowerCase().split(/\s+/);
-  const wordFreq = {};
-  tokens.forEach((t) => (wordFreq[t] = (wordFreq[t] || 0) + 1));
-  return Object.values(wordFreq);
-}
+// ✅ Error handler
+app.use((err, req, res, next) => {
+  console.error("🔥 Error caught by middleware:", err.stack);
+  res.status(500).json({
+    message: 'Something went wrong!',
+    error: process.env.NODE_ENV === 'development' ? err.message : {}
+  });
+});
 
-async function getStoredReceiptTexts() {
-  // Placeholder - retrieve from MongoDB
-  return ["Amazon Purchase 2024 $103.45", "Uber 2023 ride $21.88"];
-}
+
+router.post('/analyze-receipt', async (req, res) => {
+  res.send("Receipt analyzed");
+});
 
 module.exports = router;
 
-
-// File: server/ai/geminiService.js
-
-const axios = require("axios");
-const fs = require("fs");
-
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent";
-
-async function parseGeminiText(imageBuffer) {
-  try {
-    const base64Image = imageBuffer.toString("base64");
-
-    const requestBody = {
-      contents: [
-        {
-          parts: [
-            {
-              inlineData: {
-                mimeType: "image/png",
-                data: base64Image,
-              },
-            },
-            {
-              text: "Extract and return merchant, total amount, date, and item names from this receipt image."
-            }
-          ],
-        },
-      ],
-    };
-
-    const response = await axios.post(
-      `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
-      requestBody,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const output = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    return output || "No text extracted.";
-  } catch (error) {
-    console.error("Gemini API OCR error:", error.response?.data || error.message);
-    return "[ERROR] Gemini OCR failed.";
-  }
+// ✅ Start server
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📊 Environment: ${process.env.NODE_ENV}`);
+  });
 }
 
-module.exports = {
-  parseGeminiText,
-};
-
-
+module.exports = app;
