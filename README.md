@@ -1,10 +1,10 @@
-# TrustChain AI - Smart Receipt Validator
+# TrustChain AI #
 
 ## Overview
-AI-powered receipt validation system with blockchain audit trails.
+AI-powered receipt validation system
 
 ## Architecture
-- **Backend**: Node.js + Express
+- **Backend**: Node.js + Express + Python
 - **Frontend**: React + TypeScript + Tailwind
 - **Database**: MongoDB
 - **AI**: Google Gemini + TensorFlow
@@ -23,9 +23,9 @@ AI-powered receipt validation system with blockchain audit trails.
 4. Start development: `npm run dev`
 
 ## Team Structure
-- **Backend Dev 1**: Core API & Auth
-- **Backend Dev 2**: AI/ML Integration  
-- **Backend Dev 3**: Blockchain & Data
+- **Dev 1: Ahmed Hasan**: FrontEnd Engineering
+- **Dev 2: Shawn Nuguid**: AI/ML Integration
+- **Dev 3: Tahmid Ehsan**: Core API & Database Management
 
 ## Documentation
 - [API Documentation](./docs/api/)
