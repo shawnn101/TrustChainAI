@@ -7,7 +7,6 @@ AI-powered receipt validation system with blockchain audit trails.
 - **Backend**: Node.js + Express
 - **Frontend**: React + TypeScript + Tailwind
 - **Database**: MongoDB
-- **Blockchain**: Ethereum/Polygon
 - **AI**: Google Gemini + TensorFlow
 
 ## Getting Started
