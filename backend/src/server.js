@@ -18,6 +18,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+const receiptAnalysis = require('./services/ai/reciptAnalysis');
+app.use('/api', receiptAnalysis);
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
