@@ -1,4 +1,4 @@
-const tf = require('@tensorflow/tfjs'); // tfjs for browser-compatible usage
+const tf = require('@tensorflow/tfjs-node'); // tfjs for browser-compatible usage
 const fs = require('fs');
 const path = require('path');
 
@@ -70,4 +70,9 @@ model.compile({
   });
 
   console.log('✅ Training complete');
+
+  const savePath = path.join(__dirname, '../backend/trained_model').replace(/\\/g, '/');
+  await model.save(`file://${savePath}`);
+  console.log(`✅ Model saved to ${savePath}`);
 })();
+

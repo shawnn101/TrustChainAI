@@ -1,13 +1,13 @@
 const express = require('express');
 const multer = require('multer');
-const tf = require('@tensorflow/tfjs');
+const tf = require('@tensorflow/tfjs-node');
 const fs = require('fs');
 const path = require('path');
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 
-const modelPath = path.resolve(__dirname, '../../model/receipt_auth_model/model.json');
+const modelPath = path.resolve(__dirname, '../../trained_model/model.json');
 let model;
 
 // Load the model at startup
