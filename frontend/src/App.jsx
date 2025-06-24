@@ -66,7 +66,12 @@ const App = () => {
     
       <header className="flex justify-between items-center p-6">
         <div>
-          <img src="/logo-removebg-preview.png" alt="Logo" className="w-16 h-16 mr-3" />
+          <img
+  src="/logo-removebg-preview.png"
+  alt="TrustChainAI Logo"
+  className="w-24 h-auto max-h-16 object-contain mr-4"
+/>
+
         </div>
         <button
   className="px-6 py-2 rounded-lg font-medium border border-gray-300 flex items-center justify-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
