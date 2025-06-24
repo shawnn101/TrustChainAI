@@ -68,9 +68,18 @@ const App = () => {
         <div>
           <img src="/logo-removebg-preview.png" alt="Logo" className="w-16 h-16 mr-3" />
         </div>
-        <button className="bg-transparent hover:bg-white text-gray-800 hover:text-blue-700 px-6 py-2 rounded-lg font-medium border border-gray-300 flex items-center justify-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
-          Sign In
-        </button>
+        <button
+  className="px-6 py-2 rounded-lg font-medium border border-gray-300 flex items-center justify-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+  style={{
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backdropFilter: "blur(6px)",
+    color: "black",
+  }}
+>
+  Sign In
+</button>
+
+
       </header>
 
       <main className="flex flex-col items-center justify-center px-6 py-20">
@@ -129,13 +138,19 @@ const App = () => {
   const renderUpload = () => (
     <div className="min-h-screen min-w-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <header className="flex items-center p-6">
-        <button
-          onClick={() => setCurrentPage("home")}
-          className="flex items-center text-white-600 hover:text-blue-800 mr-4 bg-transparent hover:bg-white px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-        >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Back to Home
-        </button>
+<button
+  onClick={() => setCurrentPage("home")}
+  className="flex items-center mr-4 px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl border border-gray-300"
+  style={{
+    backgroundColor: "#000", // solid black
+    backdropFilter: "blur(6px)",
+    color: "white",
+  }}
+>
+  <ArrowLeft className="w-5 h-5 mr-2 text-white" />
+  Back to Home
+</button>
+
         <div className="text-2xl font-bold text-gray-800">Upload Receipt</div>
       </header>
 
@@ -189,76 +204,96 @@ const App = () => {
   )
 
   const renderHistory = () => (
-    <div className="min-h-screen min-w-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <header className="flex items-center p-6">
-       <button
-          onClick={() => setCurrentPage("home")}
-          className="flex items-center text-white-600 hover:text-green-800 mr-4 bg-transparent hover:bg-white px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-        >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Back to Home
-        </button>
-        <div className="text-2xl font-bold text-gray-800">Verification History</div>
-      </header>
+  <div className="min-h-screen min-w-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <header className="flex items-center p-6">
+<button
+  onClick={() => setCurrentPage("home")}
+  className="flex items-center mr-4 px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl border border-gray-300"
+  style={{
+    backgroundColor: "#000", // solid black
+    backdropFilter: "blur(6px)",
+    color: "white",
+  }}
+>
+  <ArrowLeft className="w-5 h-5 mr-2 text-white" />
+  Back to Home
+</button>
 
-      <main className="px-6 py-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Your Submitted Documents</h2>
-            <p className="text-gray-600">Click on any document to view detailed audit results</p>
-          </div>
+      <div className="text-2xl font-bold text-gray-800">Verification History</div>
+    </header>
 
-          <div className="space-y-4">
-            {uploadedFiles.map((file) => (
-              <button
-                key={file.id}
-                onClick={() => {
-                  setSelectedDocument(file)
-                  setCurrentPage("document-detail")
-                }}
-                className="w-full bg-transparent hover:bg-white rounded-xl p-6 text-left border-2 border-gray-200 hover:border-blue-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-1">{file.name}</h3>
-                    <p className="text-gray-600 mb-2">{file.preview}</p>
-                    <div className="flex items-center space-x-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          file.status === "flagged" ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
-                        }`}
-                      >
-                        {file.status === "flagged" ? "Issues Found" : "Verified"}
+    <main className="px-6 py-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Your Submitted Documents</h2>
+          <p className="text-gray-600">Click on any document to view detailed audit results</p>
+        </div>
+
+        <div className="space-y-4">
+          {uploadedFiles.map((file) => (
+            <button
+              key={file.id}
+              onClick={() => {
+                setSelectedDocument(file)
+                setCurrentPage("document-detail")
+              }}
+              className="w-full rounded-xl p-6 text-left border border-gray-300 hover:border-blue-300 shadow-md transition-all duration-300 transform hover:scale-105"
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(6px)",
+                color: "black"
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold mb-1">{file.name}</h3>
+                  <p className="mb-2">{file.preview}</p>
+                  <div className="flex items-center space-x-4">
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        file.status === "flagged"
+                          ? "bg-red-100 text-red-700"
+                          : "bg-green-100 text-green-700"
+                      }`}
+                    >
+                      {file.status === "flagged" ? "Issues Found" : "Verified"}
+                    </span>
+                    {file.issues.length > 0 && (
+                      <span className="text-sm text-gray-700">
+                        {file.issues.length} issue{file.issues.length !== 1 ? "s" : ""} detected
                       </span>
-                      {file.issues.length > 0 && (
-                        <span className="text-sm text-gray-500">
-                          {file.issues.length} issue{file.issues.length !== 1 ? "s" : ""} detected
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center">
-                    <Eye className="w-5 h-5 text-gray-400" />
+                    )}
                   </div>
                 </div>
-              </button>
-            ))}
-          </div>
+                <div className="flex items-center">
+                  <Eye className="w-5 h-5 text-gray-500" />
+                </div>
+              </div>
+            </button>
+          ))}
         </div>
-      </main>
-    </div>
-  )
+      </div>
+    </main>
+  </div>
+)
+
 
   const renderDocumentDetail = () => (
     <div className="min-h-screen w-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <header className="flex items-center p-6">
-        <button
-          onClick={() => setCurrentPage("history")}
-          className="flex items-center text-white-600 hover:text-green-800 mr-4 bg-transparent hover:bg-white px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-        >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Back to History
-        </button>
+<button
+  onClick={() => setCurrentPage("home")}
+  className="flex items-center mr-4 px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl border border-gray-300"
+  style={{
+    backgroundColor: "#000", // solid black
+    backdropFilter: "blur(6px)",
+    color: "white",
+  }}
+>
+  <ArrowLeft className="w-5 h-5 mr-2 text-white" />
+  Back to History
+</button>
+
         <div className="text-2xl font-bold text-gray-800">Document Analysis</div>
       </header>
 
@@ -356,13 +391,19 @@ const App = () => {
   const renderAnalytics = () => (
     <div className="min-h-screen min-w-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <header className="flex items-center p-6">
-        <button
-          onClick={() => setCurrentPage("home")}
-          className="flex items-center text-white-600 hover:text-purple-800 mr-4 bg-transparent hover:bg-white px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-        >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Back to Home
-        </button>
+<button
+  onClick={() => setCurrentPage("home")}
+  className="flex items-center mr-4 px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl border border-gray-300"
+  style={{
+    backgroundColor: "#000", // solid black
+    backdropFilter: "blur(6px)",
+    color: "white",
+  }}
+>
+  <ArrowLeft className="w-5 h-5 mr-2 text-white" />
+  Back to Home
+</button>
+
         <div className="text-2xl font-bold text-gray-800">Analytics Dashboard</div>
       </header>
 
