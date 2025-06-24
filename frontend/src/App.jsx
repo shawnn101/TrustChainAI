@@ -71,8 +71,8 @@ const App = () => {
         <button
   className="px-6 py-2 rounded-lg font-medium border border-gray-300 flex items-center justify-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
   style={{
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    backdropFilter: "blur(6px)",
+    backgroundColor: "rgba(255, 255, 255, 0.1)", //white with transparency
+    backdropFilter: "blur(6px)", //with transparency
     color: "black",
   }}
 >
@@ -143,7 +143,7 @@ const App = () => {
   className="flex items-center mr-4 px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl border border-gray-300"
   style={{
     backgroundColor: "#000", // solid black
-    backdropFilter: "blur(6px)",
+    backdropFilter: "blur(6px)", // with transparency
     color: "white",
   }}
 >
@@ -171,9 +171,33 @@ const App = () => {
             {dragActive ? "Drop your file here" : "Drag & Drop your receipt"}
           </h3>
           <p className="text-gray-600 mb-6">Supports PDF, PNG, JPG, and text documents</p>
-          <button className="bg-transparent hover:bg-blue-600 text-blue-600 hover:text-white px-8 py-3 rounded-lg font-medium border-2 border-blue-600 transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
-            Or Browse Files
-          </button>
+<input
+  type="file"
+  id="fileUpload"
+  className="hidden"
+  onChange={(e) => {
+    const file = e.target.files[0]
+    if (file) {
+      const newFile = {
+        id: uploadedFiles.length + 1,
+        name: file.name,
+        preview: `${file.name} - Processing complete`,
+        issues: Math.random() > 0.5 ? ["Sample issue detected"] : [],
+        status: Math.random() > 0.5 ? "flagged" : "verified",
+      }
+      setUploadedFiles([...uploadedFiles, newFile])
+      alert(`File "${file.name}" uploaded successfully!`)
+    }
+  }}
+/>
+
+<button
+  onClick={() => document.getElementById("fileUpload").click()}
+  className="bg-transparent hover:bg-white text-white hover:text-white px-8 py-3 rounded-lg font-medium border-2 border-blue-600 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+>
+  Or Browse Files
+</button>
+
         </div>
 
         <div className="mt-12 text-center">
